@@ -1,7 +1,6 @@
 from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from config import config
-from db.models import Base
 
 
 def make_engine(url: str, echo: bool = False):
@@ -28,26 +27,19 @@ except Exception as e:
 Session = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
 
-async def init_db() -> None:
-    logger.info("🛠️ Initializing database schema (create_all)...")
-    try:
-        async with engine.begin() as conn:
-            await conn.run_sync(Base.metadata.create_all)
-        logger.info("✅ Database schema initialized successfully.")
-    except Exception as e:
-        logger.error(f"❌ Failed to initialize database: {e}")
-        raise
-
-
 def run_migrations() -> None:
+    """
+    Programmatic entry point for Alembic's 'upgrade head'.
+    Should be called before the main event loop starts.
+    """
     from alembic import command
     from alembic.config import Config
 
-    logger.info("🛠️ Running database migrations...")
+    logger.info("🛠️ Checking database version and running migrations...")
     try:
         alembic_cfg = Config("alembic.ini")
         command.upgrade(alembic_cfg, "head")
-        logger.info("✅ Migrations applied successfully.")
+        logger.info("✅ Database migrations applied successfully.")
     except Exception as e:
-        logger.error(f"❌ Failed to run migrations: {e}")
+        logger.error(f"❌ Database migration failed: {e}")
         raise

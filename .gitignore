@@ -26,5 +26,3 @@ Thumbs.db
 # IDEs
 .vscode/
 .idea/
-
-migrations/
