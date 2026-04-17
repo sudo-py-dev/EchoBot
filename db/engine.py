@@ -35,11 +35,11 @@ def run_migrations() -> None:
     from alembic import command
     from alembic.config import Config
 
-    logger.info("🛠️ Checking database version and running migrations...")
+    logger.info("🛠️ Database: Checking for pending migrations...")
     try:
         alembic_cfg = Config("alembic.ini")
         command.upgrade(alembic_cfg, "head")
-        logger.info("✅ Database migrations applied successfully.")
+        logger.info("✅ Database: Migration check complete (Already at head or upgraded).")
     except Exception as e:
-        logger.error(f"❌ Database migration failed: {e}")
+        logger.error(f"❌ Database: Migration execution failed: {e}")
         raise
