@@ -2,7 +2,8 @@
 FROM python:3.13-slim-bookworm AS builder
 
 # Copy uv from the official image
-COPY --from=ghcr.io/astral-sh/uv:latest /usr/local/bin/uv /usr/local/bin/uv
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+
 
 # Set the working directory
 WORKDIR /app
@@ -22,7 +23,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install dependencies without installing the project itself
 RUN uv sync --frozen --no-install-project --no-dev
 
-# Copy only the source code and locales (avoiding tests, git, etc.)
+# Copy the source code and necessary folders
 COPY main.py config.py railway.json ./
 COPY core/ ./core/
 COPY db/ ./db/
@@ -30,6 +31,7 @@ COPY utils/ ./utils/
 COPY locales/ ./locales/
 COPY plugins/ ./plugins/
 COPY custom_filters/ ./custom_filters/
+COPY migrations/ ./migrations/
 
 # Install the project
 RUN uv sync --frozen --no-dev
