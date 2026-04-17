@@ -2,7 +2,7 @@ import os
 import sys
 import asyncio
 from loguru import logger
-from pyrogram import Client
+from pyrogram import Client, idle
 from config import config
 from core.context import AppContext, set_context
 from db.engine import Session, init_db
@@ -17,17 +17,42 @@ bot = Client(
     plugins={"root": "plugins"},
 )
 
-def main() -> None:
+
+async def start_bot() -> None:
+    """
+    Asynchronous entry point for the bot and database initialization.
+    """
     logger.remove()
     logger.add(sys.stderr, level=config.log_level)
 
-    asyncio.run(init_db())
+    # 1. Initialize DB in the current loop
+    await init_db()
 
+    # 2. Setup AppContext
     ctx = AppContext(db=Session)
     set_context(ctx)
 
-    logger.info("🚀 Bot started!")
-    bot.run()
+    # 3. Start Pyrogram
+    await bot.start()
+    logger.info(f"🚀 Bot @{bot.me.username} started successfully!")
+
+    # 4. Stay active
+    try:
+        await idle()
+    finally:
+        # 5. Graceful shutdown
+        await bot.stop()
+
+
+def main() -> None:
+    try:
+        asyncio.run(start_bot())
+    except KeyboardInterrupt:
+        pass  # Handle in the outer block
+    except Exception as e:
+        # Re-raise to be caught by the outer block
+        raise e
+
 
 if __name__ == "__main__":
     try:
@@ -38,7 +63,9 @@ if __name__ == "__main__":
     except Exception as e:
         msg = str(e)
         if "database is locked" in msg.lower():
-            logger.critical("🛑 Database is Busy: The bot database is currently locked by another process.")
+            logger.critical(
+                "🛑 Database is Busy: The bot database is currently locked by another process."
+            )
         else:
             logger.critical(f"Critical error: {e}")
         sys.exit(1)
