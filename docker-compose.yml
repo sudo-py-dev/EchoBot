@@ -27,7 +27,7 @@ services:
       - no-new-privileges:true
     cap_drop:
       - ALL
-    # read_only: true
+    read_only: true
     tmpfs:
       - /tmp
 
@@ -42,7 +42,7 @@ services:
     volumes:
       - ./pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB" ]
       interval: 5s
       timeout: 5s
       retries: 5

@@ -1,5 +1,8 @@
-# Stage 1: Build the virtual environment
-FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim AS builder
+# Optimize builder and runtime to use the exact same Python version
+FROM python:3.13-slim-bookworm AS builder
+
+# Copy uv from the official image
+COPY --from=ghcr.io/astral-sh/uv:latest /usr/local/bin/uv /usr/local/bin/uv
 
 # Set the working directory
 WORKDIR /app
@@ -10,7 +13,7 @@ ENV UV_COMPILE_BYTECODE=1
 # Copy only requirements to leverage Docker caching for dependencies
 COPY pyproject.toml uv.lock ./
 
-# Install build dependencies if needed (e.g., for tgcrypto)
+# Install build dependencies (needed for tgcrypto and other C extensions)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     gcc \
@@ -19,16 +22,22 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install dependencies without installing the project itself
 RUN uv sync --frozen --no-install-project --no-dev
 
-# Copy the source code and other required files
-COPY . .
+# Copy only the source code and locales (avoiding tests, git, etc.)
+COPY main.py config.py railway.json ./
+COPY core/ ./core/
+COPY db/ ./db/
+COPY utils/ ./utils/
+COPY locales/ ./locales/
+COPY plugins/ ./plugins/
+COPY custom_filters/ ./custom_filters/
 
 # Install the project
 RUN uv sync --frozen --no-dev
 
 # ---
 
-# Stage 2: Create a stable runtime base
-FROM python:3.13-slim-bookworm AS runtime-base
+# Stage 2: Final application image
+FROM python:3.13-slim-bookworm
 
 WORKDIR /app
 
@@ -39,14 +48,6 @@ RUN groupadd -r bot && useradd -r -g bot -u 1000 -d /app bot
 RUN mkdir -p /app/data /app/sessions /app/logs \
     && chown -R bot:bot /app
 
-# ---
-
-# Stage 3: Final application image
-FROM runtime-base
-
-# Copy the uv binary from the builder
-COPY --from=builder /usr/local/bin/uv /usr/local/bin/uv
-
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -55,11 +56,14 @@ ENV PYTHONUNBUFFERED=1 \
     UV_NO_SYNC=1 \
     UV_FROZEN=1
 
-# Copy the pre-built environment and project from the builder
+# Copy the uv binary to the final stage
+COPY --from=builder /usr/local/bin/uv /usr/local/bin/uv
+
+# Copy the pre-built environment and optimized app files from the builder
 COPY --from=builder --chown=bot:bot /app /app
 
 # Switch to the non-privileged user
 USER bot
 
-# Run the bot
+# Run the bot with uv as requested
 CMD ["uv", "run", "main.py"]
