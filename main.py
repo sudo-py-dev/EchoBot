@@ -35,13 +35,17 @@ async def start_bot() -> None:
 
 
 def main() -> None:
+    logger.info("--- 🚀 Bot Early Boot Sequence Starting ---")
+
     from db.engine import run_migrations
+
     try:
         run_migrations()
         asyncio.run(start_bot())
     except KeyboardInterrupt:
         pass
     except Exception as e:
+        logger.critical(f"--- ❌ CRITICAL BOOT ERROR: {e} ---")
         raise e
 
 

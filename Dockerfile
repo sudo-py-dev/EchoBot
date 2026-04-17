@@ -46,4 +46,4 @@ COPY --from=builder --chown=bot:bot /app /app
 
 USER bot
 
-CMD ["uv", "run", "--no-dev", "main.py"]
+CMD ["python", "main.py"]
