@@ -67,5 +67,5 @@ COPY --from=builder --chown=bot:bot /app /app
 # Switch to the non-privileged user
 USER bot
 
-# Run the bot with uv as requested
-CMD ["uv", "run", "main.py"]
+# Run the bot directly with python for maximum speed
+CMD ["python", "main.py"]
