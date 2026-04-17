@@ -1,0 +1,50 @@
+services:
+  bot:
+    build: .
+    container_name: echobot
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./sessions:/app/sessions
+      - ./logs:/app/logs
+      - ./data:/app/data
+    environment:
+      # Use the Docker-internal hostname 'db' for the database
+      - DATABASE_URL=postgresql+asyncpg://bot:bot_password@db:5432/botdb
+      - DATA_DIR=/app/data
+      - SESSIONS_DIR=/app/sessions
+      - LOG_DIR=/app/logs
+    depends_on:
+      db:
+        condition: service_healthy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    # read_only: true
+    tmpfs:
+      - /tmp
+
+  db:
+    image: postgres:16-alpine
+    container_name: echobot-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-bot}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bot_password}
+      POSTGRES_DB: ${POSTGRES_DB:-botdb}
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
