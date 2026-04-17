@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN uv sync --frozen --no-install-project --no-dev
 
-COPY main.py config.py railway.json ./
+COPY main.py config.py railway.json alembic.ini ./
 COPY core/ ./core/
 COPY db/ ./db/
 COPY utils/ ./utils/
