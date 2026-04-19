@@ -14,14 +14,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN uv sync --frozen --no-install-project --no-dev
 
-COPY main.py config.py railway.json alembic.ini ./
-COPY core/ ./core/
-COPY db/ ./db/
-COPY utils/ ./utils/
-COPY locales/ ./locales/
-COPY plugins/ ./plugins/
-COPY custom_filters/ ./custom_filters/
+COPY src/ ./src/
 COPY migrations/ ./migrations/
+COPY railway.json alembic.ini ./
 
 RUN uv sync --frozen --no-dev
 
@@ -46,4 +41,4 @@ COPY --from=builder --chown=bot:bot /app /app
 
 USER bot
 
-CMD ["python", "main.py"]
+CMD ["python", "src/main.py"]

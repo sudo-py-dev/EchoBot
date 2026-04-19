@@ -1,6 +1,6 @@
 import pytest
 from mock import AsyncMock, patch, MagicMock
-from plugins.admin_panel.panel import settings_callback, handle_credit_input
+from src.plugins.admin_panel.panel import settings_callback, handle_credit_input
 
 
 @pytest.mark.asyncio
@@ -9,14 +9,16 @@ async def test_admin_settings_nav_cat(
 ):
     mock_callback_query.data = "settings_nav_cat_forward_-1001"
     with (
-        patch("plugins.admin_panel.panel.get_context", return_value=mock_app_context),
         patch(
-            "plugins.admin_panel.panel.get_lang_for_user",
+            "src.plugins.admin_panel.panel.get_context", return_value=mock_app_context
+        ),
+        patch(
+            "src.plugins.admin_panel.panel.get_lang_for_user",
             new_callable=AsyncMock,
             return_value="en",
         ),
-        patch("plugins.admin_panel.panel.ChannelSettingsRepository") as MockRepo,
-        patch("plugins.admin_panel.panel.AdminRepository") as MockAdminRepo,
+        patch("src.plugins.admin_panel.panel.ChannelSettingsRepository") as MockRepo,
+        patch("src.plugins.admin_panel.panel.AdminRepository") as MockAdminRepo,
     ):
         mock_repo = MockRepo.return_value
         mock_repo.get_or_create = AsyncMock()
@@ -39,13 +41,15 @@ async def test_admin_nav_add_redirect(
     mock_client.me = MagicMock()
     mock_client.me.username = "EchoBot"
     with (
-        patch("plugins.admin_panel.panel.get_context", return_value=mock_app_context),
         patch(
-            "plugins.admin_panel.panel.get_lang_for_user",
+            "src.plugins.admin_panel.panel.get_context", return_value=mock_app_context
+        ),
+        patch(
+            "src.plugins.admin_panel.panel.get_lang_for_user",
             new_callable=AsyncMock,
             return_value="en",
         ),
-        patch("plugins.admin_panel.panel.ChannelSettingsRepository") as MockRepo,
+        patch("src.plugins.admin_panel.panel.ChannelSettingsRepository") as MockRepo,
     ):
         mock_repo = MockRepo.return_value
         mock_repo.get_or_create = AsyncMock()
@@ -68,14 +72,16 @@ async def test_admin_handle_credit_input(
     mock_message.reply_to_message.id = 555
 
     with (
-        patch("plugins.admin_panel.panel.get_context", return_value=mock_app_context),
         patch(
-            "plugins.admin_panel.panel.get_lang_for_user",
+            "src.plugins.admin_panel.panel.get_context", return_value=mock_app_context
+        ),
+        patch(
+            "src.plugins.admin_panel.panel.get_lang_for_user",
             new_callable=AsyncMock,
             return_value="en",
         ),
-        patch("plugins.admin_panel.panel.ChannelSettingsRepository") as MockRepo,
-        patch("plugins.admin_panel.panel.AdminRepository") as MockAdminRepo,
+        patch("src.plugins.admin_panel.panel.ChannelSettingsRepository") as MockRepo,
+        patch("src.plugins.admin_panel.panel.AdminRepository") as MockAdminRepo,
     ):
         mock_repo = MagicMock()
         MockRepo.return_value = mock_repo

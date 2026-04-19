@@ -1,13 +1,12 @@
 [project]
 name = "echobot"
-version = "0.1.0"
-description = "Add your description here"
+version = "0.0.2"
+description = "Professional Telegram Mirroring and Translation Bot with advanced dashboard"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "aiosqlite>=0.22.1",
     "alembic>=1.18.4",
-    "colorama>=0.4.6",
     "deep-translator>=1.11.4",
     "httpx>=0.28.1",
     "kurigram>=2.2.21",
@@ -25,3 +24,8 @@ dependencies = [
 asyncio_mode = "strict"
 pythonpath = ["."]
 testpaths = ["tests"]
+
+[dependency-groups]
+dev = [
+    "rich>=15.0.0",
+]

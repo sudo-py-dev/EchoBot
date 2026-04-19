@@ -72,9 +72,11 @@ def mock_app_context(mock_session):
 @pytest.fixture(autouse=True)
 def autouse_mock_context(mock_app_context):
     with (
-        patch("core.context.get_context", return_value=mock_app_context),
+        patch("src.core.context.get_context", return_value=mock_app_context),
         patch(
-            "utils.i18n.get_lang_for_user", new_callable=AsyncMock, return_value="en"
+            "src.utils.i18n.get_lang_for_user",
+            new_callable=AsyncMock,
+            return_value="en",
         ),
     ):
         yield mock_app_context

@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncEngine
-from db.engine import make_engine
+from src.db.engine import make_engine
 
 
 def test_make_engine_sqlite():

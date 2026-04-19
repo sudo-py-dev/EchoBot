@@ -1,6 +1,6 @@
 import pytest
 from mock import AsyncMock, patch, MagicMock
-from plugins.user_panel.panel import (
+from src.plugins.user_panel.panel import (
     mych_callback,
     handle_chat_shared,
     handle_user_input,
@@ -13,14 +13,16 @@ async def test_mych_select_callback(
 ):
     mock_callback_query.data = "mych_select_-1001"
     with (
-        patch("plugins.user_panel.panel.get_context", return_value=mock_app_context),
         patch(
-            "plugins.user_panel.panel.get_lang_for_user",
+            "src.plugins.user_panel.panel.get_context", return_value=mock_app_context
+        ),
+        patch(
+            "src.plugins.user_panel.panel.get_lang_for_user",
             new_callable=AsyncMock,
             return_value="en",
         ),
-        patch("plugins.user_panel.panel.ChannelSettingsRepository") as MockRepo,
-        patch("plugins.user_panel.panel.AdminRepository") as MockAdminRepo,
+        patch("src.plugins.user_panel.panel.ChannelSettingsRepository") as MockRepo,
+        patch("src.plugins.user_panel.panel.AdminRepository") as MockAdminRepo,
     ):
         mock_repo = MockRepo.return_value
         mock_repo.get_or_create = AsyncMock()
@@ -46,14 +48,16 @@ async def test_mych_category_forward(
 ):
     mock_callback_query.data = "mych_cat_forward_-1001"
     with (
-        patch("plugins.user_panel.panel.get_context", return_value=mock_app_context),
         patch(
-            "plugins.user_panel.panel.get_lang_for_user",
+            "src.plugins.user_panel.panel.get_context", return_value=mock_app_context
+        ),
+        patch(
+            "src.plugins.user_panel.panel.get_lang_for_user",
             new_callable=AsyncMock,
             return_value="en",
         ),
-        patch("plugins.user_panel.panel.ChannelSettingsRepository") as MockRepo,
-        patch("plugins.user_panel.panel.AdminRepository") as MockAdminRepo,
+        patch("src.plugins.user_panel.panel.ChannelSettingsRepository") as MockRepo,
+        patch("src.plugins.user_panel.panel.AdminRepository") as MockAdminRepo,
     ):
         mock_repo = MockRepo.return_value
         mock_repo.get_or_create = AsyncMock()
@@ -91,14 +95,16 @@ async def test_handle_chat_shared_add_dest(
     mock_message.from_user.id = 123
 
     with (
-        patch("plugins.user_panel.panel.get_context", return_value=mock_app_context),
         patch(
-            "plugins.user_panel.panel.get_lang_for_user",
+            "src.plugins.user_panel.panel.get_context", return_value=mock_app_context
+        ),
+        patch(
+            "src.plugins.user_panel.panel.get_lang_for_user",
             new_callable=AsyncMock,
             return_value="en",
         ),
-        patch("plugins.user_panel.panel.ChannelSettingsRepository") as MockRepo,
-        patch("plugins.user_panel.panel.AdminRepository") as MockAdminRepo,
+        patch("src.plugins.user_panel.panel.ChannelSettingsRepository") as MockRepo,
+        patch("src.plugins.user_panel.panel.AdminRepository") as MockAdminRepo,
     ):
         mock_repo = MagicMock()
         MockRepo.return_value = mock_repo
@@ -131,14 +137,16 @@ async def test_handle_user_input_set_credit(
     }
     mock_message.from_user.id = 123
     with (
-        patch("plugins.user_panel.panel.get_context", return_value=mock_app_context),
         patch(
-            "plugins.user_panel.panel.get_lang_for_user",
+            "src.plugins.user_panel.panel.get_context", return_value=mock_app_context
+        ),
+        patch(
+            "src.plugins.user_panel.panel.get_lang_for_user",
             new_callable=AsyncMock,
             return_value="en",
         ),
-        patch("plugins.user_panel.panel.ChannelSettingsRepository") as MockRepo,
-        patch("plugins.user_panel.panel.AdminRepository") as MockAdminRepo,
+        patch("src.plugins.user_panel.panel.ChannelSettingsRepository") as MockRepo,
+        patch("src.plugins.user_panel.panel.AdminRepository") as MockAdminRepo,
     ):
         mock_repo = MagicMock()
         MockRepo.return_value = mock_repo
@@ -165,14 +173,16 @@ async def test_mych_leave_callback(
 ):
     mock_callback_query.data = "mych_leave_-1001"
     with (
-        patch("plugins.user_panel.panel.get_context", return_value=mock_app_context),
         patch(
-            "plugins.user_panel.panel.get_lang_for_user",
+            "src.plugins.user_panel.panel.get_context", return_value=mock_app_context
+        ),
+        patch(
+            "src.plugins.user_panel.panel.get_lang_for_user",
             new_callable=AsyncMock,
             return_value="en",
         ),
-        patch("plugins.user_panel.panel.ChannelSettingsRepository") as MockRepo,
-        patch("plugins.user_panel.panel.AdminRepository") as MockAdminRepo,
+        patch("src.plugins.user_panel.panel.ChannelSettingsRepository") as MockRepo,
+        patch("src.plugins.user_panel.panel.AdminRepository") as MockAdminRepo,
     ):
         mock_repo = MockRepo.return_value
         mock_repo.get_or_create = AsyncMock()
@@ -204,14 +214,16 @@ async def test_mych_access_guard(
     # Test that a user cannot access a channel the bot has left
     mock_callback_query.data = "mych_select_-1001"
     with (
-        patch("plugins.user_panel.panel.get_context", return_value=mock_app_context),
         patch(
-            "plugins.user_panel.panel.get_lang_for_user",
+            "src.plugins.user_panel.panel.get_context", return_value=mock_app_context
+        ),
+        patch(
+            "src.plugins.user_panel.panel.get_lang_for_user",
             new_callable=AsyncMock,
             return_value="en",
         ),
-        patch("plugins.user_panel.panel.ChannelSettingsRepository") as MockRepo,
-        patch("plugins.user_panel.panel.AdminRepository") as MockAdminRepo,
+        patch("src.plugins.user_panel.panel.ChannelSettingsRepository") as MockRepo,
+        patch("src.plugins.user_panel.panel.AdminRepository") as MockAdminRepo,
     ):
         mock_repo = MockRepo.return_value
         mock_repo.get_or_create = AsyncMock()
